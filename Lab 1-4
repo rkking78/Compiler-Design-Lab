@@ -1,0 +1,206 @@
+Lab -1
+
+Input.c 
+#include <stdio.h>
+
+int main() {
+    int NewZea_Land=10;
+    int Dhaka2, Dhaka_213123, BD24, France, Bangladesh, if2, _1, England;
+    printf("The number is %d", number);
+}
+
+
+Lex1.l
+/*Definition Section */
+%{
+#include <stdio.h>
+int keywords=0;
+int identifiers=0;
+%}
+
+
+/*Rules Section */
+%%
+(int|printf) { 
+    keywords++; 
+    printf("%s is a keyword \n", yytext);    
+}
+
+[a-zA-Z_][a-zA-Z_0-9]* {
+    identifiers++; 
+    printf("%s is a identifier \n", yytext);
+}
+
+. {}
+
+%%
+
+/* User code */
+
+int main() {
+    yyin=fopen("input.c", "r");
+    yylex();
+    printf("Total number of keywords: %d \n", keywords);
+    printf("Total number of identifiers: %d \n", identifiers);
+}
+
+int yywrap() {
+    return 1;
+}
+
+
+
+Lab - 2
+
+Lex1.l
+/*Definition Section */
+%{
+#include <stdio.h>
+
+%}
+
+
+/*Rules Section */
+%%
+x+ {
+    printf("Matched one or more occurrences of x: %s \n", yytext);
+}
+x+y+ {
+    printf("Matched one or more occurrences of x and y: %s\n", yytext);
+}
+
+xyz {
+    printf("Matched xyz exactly: %s \n", yytext);
+}
+
+. {}
+
+%%
+
+/* User code */
+
+int main() {
+    yyin=fopen("input.c", "r");
+    yylex();
+
+}
+
+int yywrap() {
+    return 1;
+}
+
+
+Lab -3 
+
+/* Definition Section */ 
+%{ 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <string.h> 
+#include "bison.tab.h" 
+%} 
+/* Rules Section */ 
+%% 
+[0-9]*\.[0-9]+ { yylval.frac=atof(yytext); return FRACTION; } 
+"+" { return PLUS; } 
+"-" { return MINUS; } 
+"*" { return MULTIPLY;} 
+"/" { return DIVISION;} 
+"(" {return LEFTPAREN;} 
+")" {return RIGHTPAREN;} 
+\n { return EOL; } 
+[ \t\r]+ {} 
+. { printf("Unknown character: %s\n", yytext);} 
+%% 
+int yywrap(void) { return 1; }
+
+
+
+Bison part
+
+/* Definition Section */ 
+%{ 
+#include <stdio.h> 
+#include <string.h> 
+int yylex(void); 
+int yyerror(const char *s); 
+extern FILE *yyin; 
+%} 
+%union { 
+float frac;  
+} 
+/* Token */ 
+%token EOL 
+%token <frac> FRACTION 
+%token PLUS 
+%type <frac> exp2 
+%token MINUS 
+%token MULTIPLY 
+%left PLUS MINUS 
+%left MULTIPLY 
+%left DIVISION 
+%token LEFTPAREN 
+%token RIGHTPAREN 
+%type <frac> fact2  
+%% 
+input: 
+
+|input line 
+; 
+line: 
+     exp2 EOL {printf ("%f \n", $1);} 
+|   exp2 {printf("%f \n", $1);} 
+|   EOL {} 
+; 
+ 
+exp2: 
+       exp2 PLUS exp2 { $$ = $1 + $3; } 
+|   exp2 MINUS exp2 { $$ = $1 - $3; } 
+|   exp2 MULTIPLY exp2 { $$ = $1 * $3; } 
+|   exp2 DIVISION exp2 { $$ = $1 / $3; } 
+|   fact2 
+; 
+
+fact2: 
+    FRACTION { $$ = $1; } 
+|   LEFTPAREN exp2 RIGHTPAREN {$$ = $2;}  
+; 
+%% 
+/* User Section */ 
+int main(void) { 
+    yyin = fopen("lab1.txt", "r"); 
+    int res=yyparse(); 
+    fclose(yyin); 
+    return res; 
+} 
+ 
+int yyerror(const char *s) { 
+    printf("ERROR: %s \n", s); 
+    return 0; 
+}
+
+
+
+
+Lab-4
+
+Code
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    int t;
+    if (scanf("%d", &t) != 1) return 0;
+    while (t--) {
+        char s[105];
+        scanf("%s", s);
+        int n = strlen(s);
+        int has_pair = 0;
+        for (int i = 0; i + 1 < n; ++i) {
+            if (s[i] == s[i+1]) { has_pair = 1; break; }
+        }
+        if (has_pair) printf("1\n");
+        else printf("%d\n", n);
+    }
+    return 0;
+}
